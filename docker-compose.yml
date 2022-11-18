@@ -26,9 +26,9 @@ services:
     volumes:
       - ./node:/usr/src/app
       - /usr/src/app/node_modules
-    # entrypoint: wait-for db:3306 -t 20 -- ./start.sh
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     networks:
       - desafio-network
 
@@ -46,6 +46,11 @@ services:
       - MYSQL_ROOT_PASSWORD=change-me
     networks:
       - desafio-network
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 20s
+      retries: 5
 
 networks:
   desafio-network:
